@@ -38,7 +38,7 @@ def form_edit_get(snake_id):
     cursor = mysql.get_db().cursor()
     cursor.execute('SELECT * FROM snake_count_100 WHERE id=%s', snake_id)
     result = cursor.fetchall()
-    return render_template('edit.html', title='Edit Form', city=result[0])
+    return render_template('edit.html', title='Edit Form', snake=result[0])
 
 
 @app.route('/edit/<int:snake_id>', methods=['POST'])
