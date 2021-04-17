@@ -92,22 +92,37 @@ def api_retrieve(snake_id) -> str:
     resp = Response(json_result, status=200, mimetype='application/json')
     return resp
 
-
-@app.route('/api/v1/snakes/', methods=['POST'])
-def api_add() -> str:
-    resp = Response(status=201, mimetype='application/json')
-    return resp
-
-
 @app.route('/api/v1/snakes/<int:snake_id>', methods=['PUT'])
 def api_edit(snake_id) -> str:
+    cursor = mysql.get_db().cursor()
+    content = request.json
+    inputData = (content['Game_Number'], content['Game_Length'],snake_id)
+    sql_update_query = """UPDATE snake_count_100 t SET t.Game_Number = %s, t.Game_Length = %s WHERE t.id = %s """
+    cursor.execute(sql_update_query, inputData)
+    mysql.get_db().commit()
+    resp = Response(status=200, mimetype='application/json')
+    return resp
+
+@app.route('/api/v1/snakes', methods=['POST'])
+def api_add() -> str:
+
+    content = request.json
+
+    cursor = mysql.get_db().cursor()
+    inputData = (content['Game_Number'], content['Game_Length'])
+    sql_insert_query = """INSERT INTO snake_count_100 (Game_Number, Game_Length) VALUES (%s, %s) """
+    cursor.execute(sql_insert_query, inputData)
+    mysql.get_db().commit()
     resp = Response(status=201, mimetype='application/json')
     return resp
 
-
-@app.route('/api/snakes/<int:snake_id>', methods=['DELETE'])
+@app.route('/api/v1/snakes/<int:snake_id>', methods=['DELETE'])
 def api_delete(snake_id) -> str:
-    resp = Response(status=210, mimetype='application/json')
+    cursor = mysql.get_db().cursor()
+    sql_delete_query = """DELETE FROM snake_count_100 WHERE id = %s """
+    cursor.execute(sql_delete_query, snake_id)
+    mysql.get_db().commit()
+    resp = Response(status=200, mimetype='application/json')
     return resp
 
 
